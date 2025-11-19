@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: dicri-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=admin@12345
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./database/scripts:/scripts
+    networks:
+      - dicri-network
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "admin@12345" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+networks:
+  dicri-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
