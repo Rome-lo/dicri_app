@@ -28,7 +28,11 @@ docker exec -it dicri-sqlserver /opt/mssql-tools18/bin/sqlcmd \
 
 
 # Levantar sqlserver
-docker-compose up -d sqlserver
+# Limpiar todo
+docker-compose down -v
+
+# Levantar
+docker-compose up
 
 # Ejecutar scripts
 ./database.sh  
