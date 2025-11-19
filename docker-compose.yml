@@ -15,12 +15,30 @@ services:
       - ./database/scripts:/scripts
     networks:
       - dicri-network
-    healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "admin@12345" -Q "SELECT 1" || exit 1
-      interval: 10s
-      timeout: 3s
-      retries: 10
-      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dicri-backend
+    environment:
+      - PORT=5050
+      - NODE_ENV=production
+      - DB_USER=sa
+      - DB_PASSWORD=admin@12345
+      - DB_SERVER=sqlserver
+      - DB_DATABASE=DICRI_DB
+      - DB_PORT=1433
+      - JWT_SECRET=dicri-mp-guatemala-secret-key-2025
+      - JWT_EXPIRES_IN=24h
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost
+    ports:
+      - "5050:5050"
+    depends_on:
+      - sqlserver
+    networks:
+      - dicri-network
+    restart: unless-stopped
 
 networks:
   dicri-network:
@@ -28,3 +46,4 @@ networks:
 
 volumes:
   sqlserver-data:
+    driver: local
