@@ -15,6 +15,24 @@ services:
       - ./database/scripts:/scripts
     networks:
       - dicri-network
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        /opt/mssql/bin/sqlservr &
+        echo 'Esperando a que SQL Server esté listo...'
+        sleep 30
+        until /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P admin@12345 -C -Q 'SELECT 1' &> /dev/null
+        do
+          sleep 5
+        done
+        echo 'Creando tablas...'
+        /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P admin@12345 -C -i /scripts/01_tablas_estructura.sql
+        echo 'Creando stored procedures...'
+        /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P admin@12345 -C -i /scripts/02_procedimientos.sql
+        echo 'Insertando datos de prueba...'
+        /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P admin@12345 -C -i /scripts/03_data_prueba.sql
+        echo 'DICRI_DB configurada exitosamente.'
+        wait
 
   backend:
     build:
