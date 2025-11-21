@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { Container, Row, Col, Card, Table, Button, Badge } from 'react-bootstrap';
-import { FiEye, FiLogOut } from 'react-icons/fi';
+import { FiEye } from 'react-icons/fi';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import expedienteService from '../services/expedienteService';
+import AppNavbar from '../components/layout/Navbar';
 
 const ExpedientesRevision = () => {
     const navigate = useNavigate();
-    const { user, logout } = useAuth();
     const [expedientes, setExpedientes] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -31,29 +30,10 @@ const ExpedientesRevision = () => {
         }
     };
 
-    const cerrarSesion = () => {
-        logout();
-        navigate('/login');
-    };
 
     return (
         <div className="min-vh-100" style={{ backgroundColor: '#f5f5f5' }}>
-            <nav className="navbar navbar-dark bg-dark mb-4">
-                <div className="container-fluid">
-                    <span className="navbar-brand" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-                        DICRI APP
-                    </span>
-                    <div className="d-flex align-items-center text-white">
-                        <span className="me-3">{user?.nombre}</span>
-                        <span className="badge bg-light text-dark me-3">{user?.rol}</span>
-
-                        <button className="btn btn-outline-light btn-sm" onClick={cerrarSesion}>
-                            <FiLogOut className="me-1" />
-                            Salir
-                        </button>
-                    </div>
-                </div>
-            </nav>
+            <AppNavbar />
 
             <Container>
                 <Row className="mb-4">

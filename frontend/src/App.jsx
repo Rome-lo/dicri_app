@@ -12,13 +12,14 @@ import Reportes from './pages/Reportes';
 
 function App() {
     return (
-        <AuthProvider>
+
             <BrowserRouter>
+                    <AuthProvider>
                 <Routes>
                     <Route path="/login" element={<Login />} />
 
                     <Route
-                        path="/"
+                        path="/dashboard"
                         element={
                             <PrivateRoute>
                                 <Dashboard />
@@ -70,10 +71,12 @@ function App() {
                         }
                     />
 
-                    <Route path="*" element={<Navigate to="/" replace />} />
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Routes>
+                        </AuthProvider>
             </BrowserRouter>
-        </AuthProvider>
+
     );
 }
 

@@ -4,9 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { FiFolder, FiClock, FiCheckCircle, FiXCircle, FiEdit, FiActivity, FiPlus, FiLogOut}  from 'react-icons/fi';
 import api from '../services/api';
+import AppNavbar from '../components/layout/Navbar';
 
 const Dashboard = () => {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     const [stats, setStats] = useState({
@@ -24,10 +25,17 @@ const Dashboard = () => {
 
     const obtenerDatos = async () => {
         try {
-            const response = await api.get('/reportes');
-            if (response.data.success) {
-                setStats(response.data.data.estadisticas);
+            if (user?.rol !== 'COORDINADOR' && user?.rol !== 'ADMIN') {
+                console.log('No autorizado para ver estadísticas');
+                return;
+            }else{
+                console.log('Autorizado para ver estadísticas');
+                const response = await api.get('/reportes');
+                if (response.data.success) {
+                    setStats(response.data.data.estadisticas);
+                }
             }
+            
         } catch (error) {
             console.error('Error al cargar estadísticas:', error);
         } finally {
@@ -36,26 +44,9 @@ const Dashboard = () => {
     };
     
 
-    const cerrarSesion = () => {
-        logout();
-        navigate('/login');
-    };
-
     return (
         <div className="min-vh-100" style={{ backgroundColor: '#f5f5f5' }}>
-            <nav className="navbar navbar-dark bg-dark mb-4">
-                <div className="container-fluid">
-                    <span className="navbar-brand">Sistema DICRI</span>
-                    <div className="d-flex align-items-center text-white">
-                        <span className="me-3">{user?.nombre}</span>
-                        <span className="badge bg-light text-dark me-3">{user?.rol}</span>
-                        <button className="btn btn-outline-light btn-sm" onClick={cerrarSesion}>
-                            <FiLogOut className="me-1" />
-                            Salir
-                        </button>
-                    </div>
-                </div>
-            </nav>
+            <AppNavbar />
 
             <Container>
                 <Row className="mb-4">
@@ -65,7 +56,8 @@ const Dashboard = () => {
                     </Col>
                 </Row>
 
-                <Row className="g-3 mb-4">
+                {(user?.rol === 'COORDINADOR' || user?.rol === 'ADMIN') && (
+                    <Row className="g-3 mb-4">
                     <Col md={4}>
                         <Card className="h-100 border-start border-primary border-4">
                             <Card.Body>
@@ -150,6 +142,7 @@ const Dashboard = () => {
                         </Card>
                     </Col>
                 </Row>
+                )}
 
                 <Row>
                     <Col>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Container, Card, Form, Button, Alert, InputGroup } from 'react-bootstrap';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiLogIn } from 'react-icons/fi';
+import { FiMail, FiLock, FiLogIn } from 'react-icons/fi';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -20,8 +20,9 @@ const Login = () => {
         setLoading(true);
         try {
             await login(email, password);
-            navigate('/');
+            navigate('/dashboard', { replace: true });
         } catch (err) {
+            console.error('Error al iniciar sesión:', err);
             setError(err.response?.data?.message || 'Error al iniciar sesión');
         } finally {
             setLoading(false);
@@ -31,13 +32,15 @@ const Login = () => {
     };
 
     return (
+        
         <div className="login-background">
-            <Container>
-                <div className="d-flex justify-content-center">
+            <div className="login-overlay" />
+            <Container className="login-container">
+                <div className="d-flex justify-content-center align-items-center min-vh-100">
                     <Card className="login-card shadow-lg">
                         <Card.Body className="p-5">
                             <div className="text-center mb-4">
-                                <h2 className="fw-bold text-primary">DICRI APP</h2>
+                                <h2 className="fw-bold text-principal" >DICRI APP</h2>
                                 
                                 <small>Gestión de Evidencias Criminalísticas</small>
                             </div>
@@ -102,7 +105,7 @@ const Login = () => {
                     </Card>
                 </div>
             </Container>
-        </div>
+            </div>
     );
 };
 

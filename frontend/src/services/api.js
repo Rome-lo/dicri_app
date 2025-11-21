@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const API_URL = process.env.API_URL_BACK || 'http://localhost:5050/api';;//puerto que se definió en variables de entorno
 
-console.log('API_URL configurada:', API_URL);
 const api = axios.create({
     baseURL: API_URL,
     headers: {
